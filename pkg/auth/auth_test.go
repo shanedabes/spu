@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -17,4 +18,22 @@ func TestLoadToken(t *testing.T) {
 
 	_, err := LoadToken(r)
 	assert.Nil(t, err)
+}
+
+type errReader struct{}
+
+func (e errReader) Read([]byte) (int, error) {
+	return 0, errors.New("test error")
+}
+
+func TestLoadTokenReadErr(t *testing.T) {
+	_, err := LoadToken(errReader{})
+	assert.NotNil(t, err)
+}
+
+func TestLoadTokenJSONErr(t *testing.T) {
+	r := strings.NewReader("")
+	_, err := LoadToken(r)
+
+	assert.NotNil(t, err)
 }
