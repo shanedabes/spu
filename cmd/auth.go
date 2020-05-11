@@ -30,7 +30,7 @@ import (
 // authCmd represents the auth command
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "Authenticate with the spotify API.",
+	Short: "Authenticate with the spotify API",
 	Long: `Authenticate with the spotify API using client and secret variables. These can be provided using environment variables, flags or from the config file.
 
 The generated token will be saved to cache to prevent the need to run this command again.`,
