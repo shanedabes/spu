@@ -59,12 +59,17 @@ func (c *cachedClientConfig) FileName() (string, error) {
 	return path.Join(userCacheDir, "spu", "token.json"), nil
 }
 
-func setCacheFileName(fn string) func(*cachedClientConfig) {
+// SetCacheFileName can be passed to the CachedClient function to override
+// the default cache filename location
+func SetCacheFileName(fn string) func(*cachedClientConfig) {
 	return func(c *cachedClientConfig) {
 		c.fileName = fn
 	}
 }
 
+// CachedClient is used to create a client from the token cached by
+// the auth command. This cache location can be overridden by passing
+// functional options
 func CachedClient(options ...func(*cachedClientConfig)) (c spotify.Client, err error) {
 	cfg := cachedClientConfig{}
 

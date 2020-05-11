@@ -100,7 +100,7 @@ func TestDefaultCacheFileName(t *testing.T) {
 func TestSetCacheFileName(t *testing.T) {
 	cfg := cachedClientConfig{}
 
-	f := setCacheFileName("test/token.json")
+	f := SetCacheFileName("test/token.json")
 	f(&cfg)
 
 	fn, err := cfg.FileName()
@@ -112,7 +112,7 @@ func TestSetCacheFileName(t *testing.T) {
 func TestCachedClient(t *testing.T) {
 	testCache := path.Join("testdata", "token.json")
 
-	_, err := CachedClient(setCacheFileName(testCache))
+	_, err := CachedClient(SetCacheFileName(testCache))
 	assert.Nil(t, err)
 }
 
@@ -132,11 +132,11 @@ func TestCachedClientCfgFileNameFail(t *testing.T) {
 func TestCachedClientOpenFail(t *testing.T) {
 	testCache := path.Join("testdata", "na_token.json")
 
-	_, err := CachedClient(setCacheFileName(testCache))
+	_, err := CachedClient(SetCacheFileName(testCache))
 	assert.NotNil(t, err)
 }
 
 func TestCachedClientLoadTokenFail(t *testing.T) {
-	_, err := CachedClient(setCacheFileName("auth_test.go"))
+	_, err := CachedClient(SetCacheFileName("auth_test.go"))
 	assert.NotNil(t, err)
 }
