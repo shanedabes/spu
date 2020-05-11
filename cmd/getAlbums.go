@@ -17,12 +17,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path"
 
 	"github.com/shanedabes/spu/pkg/auth"
 	"github.com/spf13/cobra"
-	"github.com/zmb3/spotify"
 )
 
 // getAlbumsCmd represents the albums command
@@ -33,23 +30,10 @@ var getAlbumsCmd = &cobra.Command{
 
 Alternatively, pass IDs to retrieve information on specific albums.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		userCacheDir, err := os.UserCacheDir()
+		client, err := auth.CachedClient()
 		if err != nil {
 			return err
 		}
-
-		cache, err := os.Open(path.Join(userCacheDir, "spu", "token.json"))
-		if err != nil {
-			return err
-		}
-		defer cache.Close()
-
-		token, err := auth.LoadToken(cache)
-		if err != nil {
-			return err
-		}
-
-		client := spotify.NewAuthenticator("", "").NewClient(&token)
 
 		albums, err := client.CurrentUsersAlbums()
 		if err != nil {

@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
+	"path"
 
+	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )
 
@@ -37,4 +40,24 @@ func SaveToken(i interface{}, w io.Writer) (err error) {
 	}
 
 	return
+}
+
+func CachedClient() (c spotify.Client, err error) {
+	userCacheDir, err := os.UserCacheDir()
+	if err != nil {
+		return
+	}
+
+	cache, err := os.Open(path.Join(userCacheDir, "spu", "token.json"))
+	if err != nil {
+		return
+	}
+	defer cache.Close()
+
+	token, err := LoadToken(cache)
+	if err != nil {
+		return
+	}
+
+	return spotify.NewAuthenticator("", "").NewClient(&token), nil
 }
