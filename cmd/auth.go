@@ -79,7 +79,11 @@ func authMain() error {
 
 	go http.ListenAndServe(":8080", nil)
 
-	sp := spotify.NewAuthenticator(redirectURL, spotify.ScopeUserReadPrivate)
+	sp := spotify.NewAuthenticator(
+		redirectURL,
+		spotify.ScopeUserReadPrivate,
+		spotify.ScopeUserLibraryRead,
+	)
 	url := sp.AuthURL(state)
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser:", url)
 

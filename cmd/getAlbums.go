@@ -17,8 +17,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path"
 
+	"github.com/shanedabes/spu/pkg/auth"
 	"github.com/spf13/cobra"
+	"github.com/zmb3/spotify"
 )
 
 // getAlbumsCmd represents the albums command
@@ -28,8 +32,38 @@ var getAlbumsCmd = &cobra.Command{
 	Long: `Retrieve all of the albums in the current user's library.
 
 Alternatively, pass IDs to retrieve information on specific albums.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("albums called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		userCacheDir, err := os.UserCacheDir()
+		if err != nil {
+			return err
+		}
+
+		cache, err := os.Open(path.Join(userCacheDir, "spu", "token.json"))
+		if err != nil {
+			return err
+		}
+		defer cache.Close()
+
+		token, err := auth.LoadToken(cache)
+		if err != nil {
+			return err
+		}
+
+		client := spotify.NewAuthenticator("", "").NewClient(&token)
+
+		albums, err := client.CurrentUsersAlbums()
+		if err != nil {
+			return err
+		}
+
+		for _, album := range albums.Albums {
+			out := fmt.Sprintf(
+				"%s - %s", album.Artists[0].Name, album.Name,
+			)
+			fmt.Println(out)
+		}
+
+		return nil
 	},
 }
 
