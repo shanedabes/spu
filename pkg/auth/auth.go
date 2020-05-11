@@ -42,13 +42,42 @@ func SaveToken(i interface{}, w io.Writer) (err error) {
 	return
 }
 
-func CachedClient() (c spotify.Client, err error) {
+type cachedClientConfig struct {
+	fileName string
+}
+
+func (c *cachedClientConfig) FileName() (string, error) {
+	if c.fileName != "" {
+		return c.fileName, nil
+	}
+
 	userCacheDir, err := os.UserCacheDir()
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(userCacheDir, "spu", "token.json"), nil
+}
+
+func setCacheFileName(fn string) func(*cachedClientConfig) {
+	return func(c *cachedClientConfig) {
+		c.fileName = fn
+	}
+}
+
+func CachedClient(options ...func(*cachedClientConfig)) (c spotify.Client, err error) {
+	cfg := cachedClientConfig{}
+
+	for _, option := range options {
+		option(&cfg)
+	}
+
+	cacheFn, err := cfg.FileName()
 	if err != nil {
 		return
 	}
 
-	cache, err := os.Open(path.Join(userCacheDir, "spu", "token.json"))
+	cache, err := os.Open(cacheFn)
 	if err != nil {
 		return
 	}

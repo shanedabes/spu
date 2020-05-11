@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -78,5 +80,63 @@ func TestSaveTokenWriteErr(t *testing.T) {
 	w := errReadWriter{}
 
 	err := SaveToken(&token, w)
+	assert.NotNil(t, err)
+}
+
+func TestDefaultCacheFileName(t *testing.T) {
+	cfg := cachedClientConfig{}
+
+	userCacheDir, err := os.UserCacheDir()
+	assert.Nil(t, err)
+
+	expected := path.Join(userCacheDir, "spu", "token.json")
+
+	got, err := cfg.FileName()
+	assert.Nil(t, err)
+
+	assert.Equal(t, expected, got)
+}
+
+func TestSetCacheFileName(t *testing.T) {
+	cfg := cachedClientConfig{}
+
+	f := setCacheFileName("test/token.json")
+	f(&cfg)
+
+	fn, err := cfg.FileName()
+	assert.Nil(t, err)
+
+	assert.Equal(t, fn, "test/token.json")
+}
+
+func TestCachedClient(t *testing.T) {
+	testCache := path.Join("testdata", "token.json")
+
+	_, err := CachedClient(setCacheFileName(testCache))
+	assert.Nil(t, err)
+}
+
+func TestCachedClientCfgFileNameFail(t *testing.T) {
+	home := os.Getenv("HOME")
+	os.Setenv("HOME", "")
+	defer os.Setenv("HOME", home)
+
+	cfg := cachedClientConfig{}
+	_, err := cfg.FileName()
+	assert.NotNil(t, err)
+
+	_, err = CachedClient()
+	assert.NotNil(t, err)
+}
+
+func TestCachedClientOpenFail(t *testing.T) {
+	testCache := path.Join("testdata", "na_token.json")
+
+	_, err := CachedClient(setCacheFileName(testCache))
+	assert.NotNil(t, err)
+}
+
+func TestCachedClientLoadTokenFail(t *testing.T) {
+	_, err := CachedClient(setCacheFileName("auth_test.go"))
 	assert.NotNil(t, err)
 }
