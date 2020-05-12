@@ -38,24 +38,26 @@ var getAlbumsCmd = &cobra.Command{
 	Long: `Retrieve all of the albums in the current user's library.
 
 Alternatively, pass IDs to retrieve information on specific albums.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := auth.CachedClient()
-		if err != nil {
-			return err
-		}
+	RunE: getAlbumsFunc,
+}
 
-		albums, err := client.CurrentUsersAlbums()
-		if err != nil {
-			return err
-		}
+func getAlbumsFunc(cmd *cobra.Command, args []string) error {
+	client, err := auth.CachedClient()
+	if err != nil {
+		return err
+	}
 
-		for _, album := range albums.Albums {
-			out := fmt.Sprintf(
-				"%s - %s", album.Artists[0].Name, album.Name,
-			)
-			fmt.Println(out)
-		}
+	albums, err := client.CurrentUsersAlbums()
+	if err != nil {
+		return err
+	}
 
-		return nil
-	},
+	for _, album := range albums.Albums {
+		out := fmt.Sprintf(
+			"%s - %s", album.Artists[0].Name, album.Name,
+		)
+		fmt.Println(out)
+	}
+
+	return nil
 }

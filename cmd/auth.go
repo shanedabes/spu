@@ -34,20 +34,14 @@ var authCmd = &cobra.Command{
 	Long: `Authenticate with the spotify API using client and secret variables. These can be provided using environment variables, flags or from the config file.
 
 The generated token will be saved to cache to prevent the need to run this command again.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		err := authMain()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
+	RunE: authFunc,
 }
 
 const (
 	state = "abc123"
 )
 
-func authMain() error {
+func authFunc(cmd *cobra.Command, args []string) error {
 	userCacheDir, err := os.UserCacheDir()
 	if err != nil {
 		return err
@@ -79,6 +73,7 @@ func authMain() error {
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser:", url)
 
 	code := <-ch
+
 	token, err := sp.Exchange(code)
 	if err != nil {
 		return err
