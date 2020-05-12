@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
+	"github.com/shanedabes/spu/pkg/auth"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +31,39 @@ var getCmd = &cobra.Command{
 Alternatively, spotify IDs can be given to retrieve information on specific resources.`,
 }
 
+// func init() {
+// }
+
+// getAlbumsCmd represents the albums command
+var getAlbumsCmd = &cobra.Command{
+	Use:   "albums",
+	Short: "Get user albums",
+	Long: `Retrieve all of the albums in the current user's library.
+
+Alternatively, pass IDs to retrieve information on specific albums.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := auth.CachedClient()
+		if err != nil {
+			return err
+		}
+
+		albums, err := client.CurrentUsersAlbums()
+		if err != nil {
+			return err
+		}
+
+		for _, album := range albums.Albums {
+			out := fmt.Sprintf(
+				"%s - %s", album.Artists[0].Name, album.Name,
+			)
+			fmt.Println(out)
+		}
+
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(getCmd)
+	getCmd.AddCommand(getAlbumsCmd)
 }
