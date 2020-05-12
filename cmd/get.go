@@ -56,7 +56,7 @@ func getAlbumsFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, album := range albums {
-		fmt.Println(album)
+		fmt.Println(collection.AlbumFmt(album))
 	}
 
 	return nil

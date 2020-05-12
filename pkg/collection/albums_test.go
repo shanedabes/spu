@@ -23,7 +23,7 @@ var testAlbum = spotify.SavedAlbum{
 
 func TestAlbumFmt(t *testing.T) {
 	expected := "test - test"
-	got := albumFmt(testAlbum)
+	got := AlbumFmt(testAlbum)
 
 	assert.Equal(t, expected, got)
 }
@@ -39,9 +39,7 @@ func (m *mockAlbumsClient) CurrentUsersAlbums() (*spotify.SavedAlbumPage, error)
 }
 
 func TestAlbums(t *testing.T) {
-	expected := []string{
-		"test - test",
-	}
+	expected := []spotify.SavedAlbum{testAlbum}
 	got, err := Albums(&mockAlbumsClient{})
 
 	assert.Nil(t, err)
