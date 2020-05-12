@@ -12,6 +12,17 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	RedirectURL = "http://localhost:8080/callback"
+)
+
+var (
+	Scopes = []string{
+		spotify.ScopeUserReadPrivate,
+		spotify.ScopeUserLibraryRead,
+	}
+)
+
 // LoadToken loads a token from cache file (or any io.Reader)
 func LoadToken(r io.Reader) (t oauth2.Token, err error) {
 	j, err := ioutil.ReadAll(r)
@@ -93,5 +104,6 @@ func CachedClient(options ...func(*cachedClientConfig)) (c spotify.Client, err e
 		return
 	}
 
-	return spotify.NewAuthenticator("", "").NewClient(&token), nil
+	return spotify.NewAuthenticator(RedirectURL, Scopes...).
+		NewClient(&token), nil
 }

@@ -48,8 +48,7 @@ func init() {
 }
 
 const (
-	redirectURL = "http://localhost:8080/callback"
-	state       = "abc123"
+	state = "abc123"
 )
 
 func authMain() error {
@@ -79,11 +78,7 @@ func authMain() error {
 
 	go http.ListenAndServe(":8080", nil)
 
-	sp := spotify.NewAuthenticator(
-		redirectURL,
-		spotify.ScopeUserReadPrivate,
-		spotify.ScopeUserLibraryRead,
-	)
+	sp := spotify.NewAuthenticator(auth.RedirectURL, auth.Scopes...)
 	url := sp.AuthURL(state)
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser:", url)
 
