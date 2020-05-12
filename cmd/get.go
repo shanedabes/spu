@@ -31,9 +31,6 @@ var getCmd = &cobra.Command{
 Alternatively, spotify IDs can be given to retrieve information on specific resources.`,
 }
 
-// func init() {
-// }
-
 // getAlbumsCmd represents the albums command
 var getAlbumsCmd = &cobra.Command{
 	Use:   "albums",
@@ -61,9 +58,4 @@ Alternatively, pass IDs to retrieve information on specific albums.`,
 
 		return nil
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(getCmd)
-	getCmd.AddCommand(getAlbumsCmd)
 }

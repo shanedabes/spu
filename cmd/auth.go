@@ -43,10 +43,6 @@ The generated token will be saved to cache to prevent the need to run this comma
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(authCmd)
-}
-
 const (
 	state = "abc123"
 )
