@@ -13,12 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+// Package cmd contains code for the spu cli
 package cmd
 
 import (
 	"fmt"
 
 	"github.com/shanedabes/spu/pkg/auth"
+	"github.com/shanedabes/spu/pkg/collection"
 	"github.com/spf13/cobra"
 )
 
@@ -47,16 +50,13 @@ func getAlbumsFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	albums, err := client.CurrentUsersAlbums()
+	albums, err := collection.Albums(&client)
 	if err != nil {
 		return err
 	}
 
-	for _, album := range albums.Albums {
-		out := fmt.Sprintf(
-			"%s - %s", album.Artists[0].Name, album.Name,
-		)
-		fmt.Println(out)
+	for _, album := range albums {
+		fmt.Println(album)
 	}
 
 	return nil
